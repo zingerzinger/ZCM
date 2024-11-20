@@ -5,7 +5,7 @@ LOLANG is a simple programming language.
 The repository contains: <br >
 
 - examples of programs written in LOLANG
-- examples of programs written in zasm (ZCM assebly)
+- examples of programs written in zasm (ZCM assembly)
 - ZCM core instruction set
 - LOLANG compiler ( LOLANG --> lexer --> AST builder --> emitter --> zasm --> binary --> core emulator )
 
