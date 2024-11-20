@@ -1,0 +1,12 @@
+C:\Users\Zinger\Desktop\zcm\ZCM\bin\Debug\ZCM.exe.config
+C:\Users\Zinger\Desktop\zcm\ZCM\bin\Debug\ZCM.exe
+C:\Users\Zinger\Desktop\zcm\ZCM\bin\Debug\ZCM.pdb
+C:\Users\Zinger\Desktop\zcm\ZCM\obj\Debug\ZCM.csprojAssemblyReference.cache
+C:\Users\Zinger\Desktop\zcm\ZCM\obj\Debug\ZCM.exe
+C:\Users\Zinger\Desktop\zcm\ZCM\obj\Debug\ZCM.pdb
+D:\TempSoft\zcm\ZCM\bin\Debug\ZCM.exe.config
+D:\TempSoft\zcm\ZCM\bin\Debug\ZCM.exe
+D:\TempSoft\zcm\ZCM\bin\Debug\ZCM.pdb
+D:\TempSoft\zcm\ZCM\obj\Debug\ZCM.csprojAssemblyReference.cache
+D:\TempSoft\zcm\ZCM\obj\Debug\ZCM.exe
+D:\TempSoft\zcm\ZCM\obj\Debug\ZCM.pdb

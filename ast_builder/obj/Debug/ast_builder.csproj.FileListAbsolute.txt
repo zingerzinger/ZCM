@@ -1,0 +1,6 @@
+D:\TempSoft\zcm_ast\ast_builder\bin\Debug\ast_builder.exe.config
+D:\TempSoft\zcm_ast\ast_builder\bin\Debug\ast_builder.exe
+D:\TempSoft\zcm_ast\ast_builder\bin\Debug\ast_builder.pdb
+D:\TempSoft\zcm_ast\ast_builder\obj\Debug\ast_builder.csprojAssemblyReference.cache
+D:\TempSoft\zcm_ast\ast_builder\obj\Debug\ast_builder.exe
+D:\TempSoft\zcm_ast\ast_builder\obj\Debug\ast_builder.pdb

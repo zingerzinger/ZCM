@@ -1,0 +1,43 @@
+JMP MAIN
+// -----------
+VAR STACK_START 1023
+VAR s "Hello world!"
+VAR one 1
+// -----------
+LBL MAIN
+LDR STACK_START
+SSP
+
+LDRA s
+PUSH
+CALL PRINT_STRING 1
+CLS 1
+HLT
+
+LBL PRINT_STRING // 1 : addr
+	LBL LOOP
+	// load val
+	LFS 1
+	BR
+	LDBA
+	PUTC
+	
+	JZ PROC_RET // char == 0 ?
+	
+	// inc address
+	LFS 1
+	PUSH
+	LDR one
+	PUSH
+	ADD
+	POP
+	STS 1
+	JMP LOOP
+
+LBL PROC_RET
+RET
+
+LDR STACK_START
+PRINT
+  
+// ----------

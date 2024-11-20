@@ -1,0 +1,33 @@
+var sprompt = "Enter digit"
+var sl = "Your digit is <  5"
+var sg = "Your digit is >= 5"
+
+func main ( ) {
+	var dummy1 = 0
+	var c = 0
+	
+	while ( 1 ) {	
+		printString( &sprompt )
+		= ( c , READC( ) - 48 )
+		PUTC( 0 )
+		PUTC( c + 48 )
+		PUTC( 0 )
+		
+		if ( c < 5 ) {
+			printString( &sl )
+		} else {
+			printString( &sg )
+		}
+	}
+}
+
+func printString ( saddr ) {
+	var i = 0
+
+	while ( saddr[ i ] != 0 ) {
+		PUTC( saddr[ i ] )
+		= ( i , i + 1 )
+	}
+	
+	PUTC( 0 )
+}

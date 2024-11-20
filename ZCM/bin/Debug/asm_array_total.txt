@@ -1,0 +1,55 @@
+JMP MAIN
+// -----------
+VAR STACK_START 1023
+VAR ZERO 0
+VAR ONE  1
+
+VAR num1 1
+VAR num2 2
+VAR num3 3
+VAR num4 4
+VAR num5 5
+// -----------
+LBL MAIN
+LDR STACK_START
+SSP
+
+LDR ZERO
+PUSH // 1 : TOTAL
+
+LDRA num1
+
+PUSH // 0 : addr
+
+LBL LOOP
+	// get total
+	LFS 1
+	PUSH
+	// get val by addr & update total
+	LFS 1
+	BR
+	LDBA
+	PUSH
+	ADD
+	POP
+	STS 1
+	
+	// update addr
+	LFS 0
+	PUSH
+	LDR ONE
+	PUSH
+	ADD
+	STS 1 // save addr
+	// check addr
+	LDRA num5
+	PUSH
+	GREAT
+	POP
+JZ LOOP
+
+LFS 1
+PRINT
+
+HLT  
+// ----------
