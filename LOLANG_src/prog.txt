@@ -3,7 +3,7 @@ var sNumEntries = "Num entries:"
 var sTotal      = "Total:"
 
 func main ( ) {
-	// var tt         = 999
+
 	var c          = 1
 	var numEntries = 2
 	var total      = 0
@@ -14,7 +14,6 @@ func main ( ) {
 	}
 	
 	printString( &sNumEntries )
-	// = ( numEntries , 123 )
 	PRINT( c )
 	PRINT( numEntries )
 	PRINT( total )

@@ -8,9 +8,13 @@ namespace ZCM
     {
         const int MEM_SIZE = 1024;
         
-        static void Main() {
+        static void Main(String[] args) {
+
+            if (args.Length < 1)       { Console.WriteLine("No input file specified."); return; }
+            if (!File.Exists(args[0])) { Console.WriteLine("Input file not found."   ); return; }
+
             Console.WriteLine("===============");
-            List<TOKEN> tokens = Lexer.Process(File.ReadAllText("prog.txt"));
+            List<TOKEN> tokens = Lexer.Process(File.ReadAllText( args[0] /*"prog.txt"*/));
             Console.WriteLine("===============");
             
             for (int i = 0; i < tokens.Count; i++) {
