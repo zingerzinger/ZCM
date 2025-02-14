@@ -20,4 +20,4 @@ Watch the [Emulator and FPGA implementation comparison video...](https://github.
 
 The Cyclone IV ZCM core Verilog implementation is to be found.
 
-![The synhesized core](https://raw.githubusercontent.com/zingerzinger/ZCM/refs/heads/master/ZCM/core_sythesized.png)
+![The synhesized core](https://raw.githubusercontent.com/zingerzinger/ZCM/refs/heads/master/core_sythesized.png)
