@@ -16,7 +16,7 @@ LOLANG is a simple programming language.
 
 See the [expected arbitrary LOLANG program execution results...](https://github.com/zingerzinger/ZCM/blob/master/LOLANG_TEST.png)
 
-Watch the [Emulator and FPGA implementation comparison video...](https://github.com/zingerzinger/ZCM/raw/refs/heads/master/ZCM.wmv)
+Watch the [Emulator and FPGA implementation comparison video...](https://youtu.be/kDskQJAMOYo)
 
 The Cyclone IV ZCM core Verilog implementation is to be found.
 
