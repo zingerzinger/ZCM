@@ -18,6 +18,7 @@ See the [expected arbitrary LOLANG program execution results...](https://github.
 
 Watch the [Emulator and FPGA implementation comparison video...](https://youtu.be/kDskQJAMOYo)
 
-The Cyclone IV ZCM core Verilog implementation is to be found.
+The Cyclone IV ZCM core Verilog implementation is being resurrected...
 
-![The synhesized core](https://raw.githubusercontent.com/zingerzinger/ZCM/refs/heads/master/core_sythesized.png)
+![The synhesized core](https://raw.githubusercontent.com/zingerzinger/ZCM/refs/heads/master/fpga/core_synth.png)
+![Top level entity](https://raw.githubusercontent.com/zingerzinger/ZCM/refs/heads/master/fpga/top_entity.png)
