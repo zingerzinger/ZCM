@@ -16,7 +16,8 @@ module CORE (
 );
 
 // === === ===
-localparam integer IN_FREQ = 100000000;
+localparam integer IN_FREQ = 10000000;
+localparam integer STARTUP_HALT_CYCLES = IN_FREQ / 10;
 localparam integer MILLIS_DIV = IN_FREQ / 1000;
 // === === ===
 
@@ -37,7 +38,7 @@ assign out_uart_rst = RST_READ_UART;
 integer DIO_ADDR = 0;
 
 integer REG_I_PTR = 0; // instruction pointer
-integer REG_INSTRUCTION = 2;//69; // current instruction
+integer REG_INSTRUCTION = 69; // current instruction
 integer EXEC_COUNTER = 0;
 
 integer MILLIS = 0;
@@ -53,7 +54,7 @@ integer REG_SLEEP = 0;
 
 initial begin
 	//REG_R = "A";
-	REG_R = 1000;
+	REG_R = "M";
 end
 
 always @(posedge clk_in) begin
@@ -75,8 +76,10 @@ always @(posedge clk_in) begin
 	case (REG_INSTRUCTION)
 //==============================================================================	
 	  69 /* STARTUP */ : begin
-			EXEC_COUNTER    <= 0;
-			REG_INSTRUCTION <= dio;
+			if (EXEC_COUNTER > STARTUP_HALT_CYCLES) begin
+				EXEC_COUNTER    <= 0;
+				REG_INSTRUCTION <= dio;
+			end
 		end
 //==============================================================================		
 		0 /* HLT */ : begin
@@ -103,7 +106,7 @@ always @(posedge clk_in) begin
 					if (in_uart_wr_busy) begin EXEC_COUNTER <= 0; end // wait uart tx ready
 				end
 				1: begin
-					uart_tx_data <= (REG_R == 0) ? "\n" : REG_R;
+					uart_tx_data <= (REG_R == 0) ? "\n" /*linefeed*/ : REG_R;
 					WR_UART   <= 1;
 					REG_I_PTR <= REG_I_PTR + 1;
 					DIO_ADDR  <= REG_I_PTR + 1;
@@ -264,9 +267,10 @@ always @(posedge clk_in) begin
 		
 			case (EXEC_COUNTER)
 				0: begin DIO_ADDR <= REG_SP; MEM_OUT <= REG_R; WR_MEM <= 1; REG_SP <= REG_SP - 1; end
-				1: begin REG_I_PTR <= REG_I_PTR + 1; DIO_ADDR <= REG_I_PTR + 1; WR_MEM <= 0; end
-			   2: begin /* wait cycle */ end
-			   3: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+				1: begin /* wait cycle */  WR_MEM <= 0; end
+				2: begin REG_I_PTR <= REG_I_PTR + 1; DIO_ADDR <= REG_I_PTR + 1; end
+			   3: begin /* wait cycle */ end
+			   4: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
 			endcase
 		end				
 //==============================================================================	
@@ -287,17 +291,201 @@ always @(posedge clk_in) begin
 
 // AUX
 //==============================================================================	
-//	27 /* SSP */ : begin
-//		
-//			case (EXEC_COUNTER)	
-//				0: begin REG_SP <= REG_R; end
-//				1: begin REG_I_PTR <= REG_I_PTR + 1; DIO_ADDR <= REG_I_PTR + 1; end
-//			   2: begin /* wait cycle */ end
-//			   3: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
-//			endcase
-//		end
+	27 /* LDR ADDR */ : begin
+		
+			case (EXEC_COUNTER)	
+				
+				0: begin DIO_ADDR <= REG_I_PTR + 1; end
+			   1: begin /* wait cycle */ end
+				2: begin DIO_ADDR <= dio; end
+				3: begin /* wait cycle */ end
+				4: begin REG_R    <= dio; end		
+								
+				5: begin REG_I_PTR <= REG_I_PTR + 2; DIO_ADDR <= REG_I_PTR + 2; end
+			   6: begin /* wait cycle */ end
+			   7: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+				
+			endcase
+		end
+//==============================================================================	
+	28 /* STR ADDR */ : begin
+		
+			case (EXEC_COUNTER)	
+				0: begin DIO_ADDR <= REG_I_PTR + 1; end
+			   1: begin /* wait cycle */ end
+				2: begin
+						DIO_ADDR <= dio;
+						MEM_OUT  <= REG_R;
+						WR_MEM   <= 1;	
+					end
+				
+				3: begin /* wait cycle */ WR_MEM <= 0; end
+				4: begin REG_I_PTR <= REG_I_PTR + 2; DIO_ADDR <= REG_I_PTR + 2; end
+			   5: begin /* wait cycle */ end
+			   6: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+			endcase
+		end
+//==============================================================================	
+	29 /* RB */ : begin
+		
+			case (EXEC_COUNTER)	
+				0: begin REG_R <= REG_B; end
+				
+				1: begin REG_I_PTR <= REG_I_PTR + 1; DIO_ADDR <= REG_I_PTR + 1; end
+			   2: begin /* wait cycle */ end
+			   3: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+			endcase
+		end
+//==============================================================================	
+	30 /* BR */ : begin
+		
+			case (EXEC_COUNTER)	
+				0: begin REG_B <= REG_R; end
+				
+				1: begin REG_I_PTR <= REG_I_PTR + 1; DIO_ADDR <= REG_I_PTR + 1; end
+			   2: begin /* wait cycle */ end
+			   3: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+			endcase
+		end
+//==============================================================================	
+	31 /* LDRA ADDR */ : begin
+		
+			case (EXEC_COUNTER)	
+				0: begin DIO_ADDR <= REG_I_PTR + 1; end
+			   1: begin /* wait cycle */ end
+				2: begin REG_R <= dio; end
+				
+				3: begin REG_I_PTR <= REG_I_PTR + 2; DIO_ADDR <= REG_I_PTR + 2; end
+			   4: begin /* wait cycle */ end
+			   5: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+			endcase
+		end
+//==============================================================================	
+	32 /* LDBA */ : begin
+		
+			case (EXEC_COUNTER)	
+				0: begin DIO_ADDR <= REG_B; end
+			   1: begin /* wait cycle */ end
+				2: begin REG_R <= dio; end
+				
+				3: begin REG_I_PTR <= REG_I_PTR + 1; DIO_ADDR <= REG_I_PTR + 1; end
+			   4: begin /* wait cycle */ end
+			   5: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+			endcase
+		end		
+//==============================================================================	
+	33 /* STBA */ : begin
+		
+			case (EXEC_COUNTER)	
+				0: begin
+						DIO_ADDR <= REG_B;
+						MEM_OUT  <= REG_R;
+						WR_MEM   <= 1;
+					end
+				
+				1: begin REG_I_PTR <= REG_I_PTR + 1; DIO_ADDR <= REG_I_PTR + 1; WR_MEM <= 0; end
+			   2: begin /* wait cycle */ end
+			   3: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+			endcase
+		end
 
-		// TODO other instructions
+// JMP		
+//==============================================================================	
+	34 /* JMP ADDR */ : begin
+		
+			case (EXEC_COUNTER)	
+				0: begin
+						DIO_ADDR  <= REG_I_PTR + 1;
+					end
+				1: begin /* wait cycle */ end
+				2: begin REG_I_PTR <= dio; DIO_ADDR <= dio; end
+				3: begin /* wait cycle */ end				
+				4: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+			endcase
+		end
+//==============================================================================	
+	35 /* JZ  ADDR */ : begin
+				if (REG_R == 0) begin
+					case (EXEC_COUNTER)	
+						0: begin DIO_ADDR <= REG_I_PTR + 1; end
+						1: begin /* wait cycle */ end
+						2: begin REG_I_PTR <= dio; DIO_ADDR <= dio; end
+						3: begin /* wait cycle */ end
+						4: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+					endcase
+				end else begin
+					case (EXEC_COUNTER)
+						0: begin DIO_ADDR <= REG_I_PTR + 2; REG_I_PTR <= REG_I_PTR + 2; end
+						1: begin /* wait cycle */ end
+						2: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+					endcase
+				end
+		end		
+//==============================================================================	
+	36 /* JNZ  ADDR */ : begin
+		
+				if (REG_R != 0) begin
+					case (EXEC_COUNTER)	
+						0: begin DIO_ADDR <= REG_I_PTR + 1; end
+						1: begin /* wait cycle */ end
+						2: begin REG_I_PTR <= dio; DIO_ADDR <= dio; end
+						3: begin /* wait cycle */ end
+						4: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+					endcase
+				end else begin
+					case (EXEC_COUNTER)
+						0: begin DIO_ADDR <= REG_I_PTR + 2; REG_I_PTR <= REG_I_PTR + 2; end
+						1: begin /* wait cycle */ end
+						2: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+					endcase
+				end
+		end				
+//==============================================================================	
+	37 /* CALL ADDR */ : begin
+		
+			case (EXEC_COUNTER)	
+				0: begin
+						DIO_ADDR <= REG_SP;
+						MEM_OUT  <= REG_I_PTR + 2;
+						WR_MEM   <= 1;
+						REG_SP   <= REG_SP - 1;
+					end
+				
+				1: begin DIO_ADDR <= REG_I_PTR + 1; WR_MEM <= 0; end
+			   2: begin /* wait cycle */ end
+			   3: begin REG_I_PTR <= dio; DIO_ADDR <= dio; end
+				4: begin /* wait cycle */ end
+				5: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end
+				
+			endcase
+		end				
+//==============================================================================	
+	38 /* CLS NUM_PARAMS */ : begin
+		
+			case (EXEC_COUNTER)	
+			
+				1: begin DIO_ADDR <= REG_I_PTR + 1; end
+			   2: begin /* wait cycle */ end
+			   3: begin REG_SP <= REG_SP + dio; end
+				
+				4: begin REG_I_PTR <= REG_I_PTR + 2; DIO_ADDR <= REG_I_PTR + 2; end
+			   5: begin /* wait cycle */ end
+			   6: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end				
+			endcase
+		end				
+//==============================================================================	
+	39 /* RET */ : begin
+		
+			case (EXEC_COUNTER)	
+			
+				1: begin REG_SP <= REG_SP + 1; end
+				2: begin DIO_ADDR <= REG_SP; end
+			   3: begin /* wait cycle */ end
+				4: begin REG_I_PTR <= dio; DIO_ADDR <= dio; end
+			   5: begin /* wait cycle */ end
+			   6: begin REG_INSTRUCTION <= dio; EXEC_COUNTER <= 0; end				
+			endcase
+		end				
 		
 	endcase
 	
